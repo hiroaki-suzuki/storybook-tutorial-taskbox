@@ -20,7 +20,12 @@ export default function Task({ task: { id, title, state }, onArchiveTask, onPinT
       </lable>
 
       {state !== 'TASK_ARCHIVE' && (
-        <button className="pin-button" onClick={() => onPinTask(id)} id={`pinTask-${id}`} key={`pinTask-${id}`}>
+        <button
+          className="pin-button"
+          onClick={() => onPinTask(id)}
+          data-testid={`pinTask-${id}`}
+          key={`pinTask-${id}`}
+        >
           <span className={`icon-star`} />
         </button>
       )}

@@ -15,7 +15,7 @@ export default function Task({ task: { id, title, state }, onArchiveTask, onPinT
         <span className="checkbox-custom" onClick={() => onArchiveTask(id)} />
       </label>
 
-      <lable htmlFor="title" aria-label={title} className="title" style={{ backgroundColor: 'red' }}>
+      <lable htmlFor="title" aria-label={title} className="title">
         <input type="text" value={title} readOnly={true} name="title" placeholder="Input title" />
       </lable>
 

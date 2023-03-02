@@ -1,16 +1,20 @@
-import { configureStore, createSlice } from '@reduxjs/toolkit';
+import { configureStore, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-const defaultTasks = [
-  { id: '1', title: 'Something', state: 'TASK_INBOX' },
-  { id: '2', title: 'Something more', state: 'TASK_INBOX' },
-  { id: '3', title: 'Something else', state: 'TASK_INBOX' },
-  { id: '4', title: 'Something again', state: 'TASK_INBOX' },
-];
 const TaskBoxData = {
-  tasks: defaultTasks,
+  tasks: [],
   status: 'idle',
   error: null,
 };
+
+export const fetchTasks = createAsyncThunk('todos/fetchTodos', async () => {
+  const response = await fetch('https://jsonplaceholder.typicode.com/todos?userId=1');
+  const data = await response.json();
+  return data.map((task) => ({
+    id: `${task.id}`,
+    title: task.title,
+    state: task.completed ? 'TASK_ARCHIVED' : 'TASK_INBOX',
+  }));
+});
 
 const TasksSlice = createSlice({
   name: 'taskbox',
@@ -24,10 +28,35 @@ const TasksSlice = createSlice({
       }
     },
   },
+  extraReducers(builder) {
+    builder
+      .addCase(fetchTasks.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+        state.tasks = [];
+      })
+      .addCase(fetchTasks.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.error = null;
+        // Add any fetched tasks to the array
+        state.tasks = action.payload;
+      })
+      .addCase(fetchTasks.rejected, (state) => {
+        state.status = 'failed';
+        state.error = 'Something went wrong';
+        state.tasks = [];
+      });
+  },
 });
 
+// The actions contained in the slice are exported for usage in our components
 export const { updateTaskState } = TasksSlice.actions;
 
+/*
+ * Our app's store configuration goes here.
+ * Read more about Redux's configureStore in the docs:
+ * https://redux-toolkit.js.org/api/configureStore
+ */
 const store = configureStore({
   reducer: {
     taskbox: TasksSlice.reducer,

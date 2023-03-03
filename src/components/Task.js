@@ -16,7 +16,14 @@ export default function Task({ task: { id, title, state }, onArchiveTask, onPinT
       </label>
 
       <lable htmlFor="title" aria-label={title} className="title">
-        <input type="text" value={title} readOnly={true} name="title" placeholder="Input title" />
+        <input
+          type="text"
+          value={title}
+          readOnly={true}
+          name="title"
+          placeholder="Input title"
+          style={{ background: 'red' }}
+        />
       </lable>
 
       {state !== 'TASK_ARCHIVE' && (
